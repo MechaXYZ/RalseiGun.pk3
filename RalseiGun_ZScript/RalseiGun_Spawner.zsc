@@ -10,11 +10,11 @@ Class RalseiGun_RalseiSpawnHandler : EventHandler
 			dke.Master = pl;
 			dke.Translation = pl.Translation;
 			dke.A_FaceMaster();
-			if (pl.FindInventory("RalseiGun_PassivePowerup"))
-				pl.TakeInventory("RalseiGun_PassivePowerup", 1);
-			if (!pl.FindInventory("RalseiGun_PassivePowerup"))
-				pl.GiveInventory("RalseiGun_PassivePowerup", 1);
-				Console.Printf("Ralsei is now passive.");
+			if (pl.FindInventory("RalseiGun_ActivePowerup"))
+				pl.TakeInventory("RalseiGun_ActivePowerup", 1);
+			if (!pl.FindInventory("RalseiGun_ActivePowerup"))
+				pl.GiveInventory("RalseiGun_ActivePowerup", 1);
+				Console.Printf("Ralsei is now active.");
 		}
 	}
 }
