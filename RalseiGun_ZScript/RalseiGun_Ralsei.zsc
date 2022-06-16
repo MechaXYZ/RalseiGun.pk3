@@ -1,0 +1,488 @@
+class RalseiGun_StayPowerup : Powerup
+{
+	Default
+	{
+   	Powerup.Duration -2147483647; // 68 fucking years
+		Inventory.PickupMessage "You got the.. Ralsei Stay Powerup?";
+	}
+}
+
+class RalseiGun_Stay : PowerupGiver
+{
+	Default
+	{
+   	Powerup.Type "RalseiGun_StayPowerup";
+		Inventory.PickupMessage "You got the.. Ralsei Stay Powerup?";
+   	+INVENTORY.AUTOACTIVATE;
+		+INVENTORY.UNDROPPABLE;
+		+INVENTORY.PERSISTENTPOWER;
+	}
+}
+
+class RalseiGun_PassivePowerup : Powerup
+{
+	Default
+	{
+   	Powerup.Duration -2147483647; // 68 fucking years
+	}
+}
+
+class RalseiGun_Passive : PowerupGiver
+{
+	Default
+	{
+   	Powerup.Type "RalseiGun_PassivePowerup";
+   	+INVENTORY.AUTOACTIVATE;
+		+INVENTORY.UNDROPPABLE;
+		+INVENTORY.PERSISTENTPOWER;
+		+INVENTORY.QUIET;
+	}
+}
+
+class RalseiGun_ActivePowerup : Powerup
+{
+	Default
+	{
+   	Powerup.Duration -2147483647; // 68 fucking years
+	}
+}
+
+class RalseiGun_Active : PowerupGiver
+{
+	Default
+	{
+   	Powerup.Type "RalseiGun_ActivePowerup";
+   	+INVENTORY.AUTOACTIVATE;
+		+INVENTORY.UNDROPPABLE;
+		+INVENTORY.PERSISTENTPOWER;
+		+INVENTORY.QUIET;
+	}
+}
+
+class RalseiGun_HealPowerUp : Powerup
+{
+	Default
+	{
+   	Powerup.Duration -15;
+	}
+}
+
+class RalseiGun_HealCD : PowerupGiver
+{
+	Default
+	{
+   	Powerup.Type "RalseiGun_HealPowerUp";
+   	+INVENTORY.AUTOACTIVATE;
+		+INVENTORY.UNDROPPABLE;
+		+INVENTORY.QUIET;
+	}
+}
+
+class RalseiGun_RalseiHealThing: Medikit
+{
+    States
+    {
+    Pickup:
+        TNT1 A 0 HealThing(frandom(20, 50), 200);
+        Stop;
+    } 
+}
+
+class RalseiGun_Ralsei : Actor
+{
+	Int IdleTic;
+	Int TeleTic;
+	Default
+	{
+		Monster;
+		Health 500;
+		Radius 8;
+		Height 40;
+		Mass 100;
+		Speed 3;
+		PainChance 20;
+		Damage 0;
+		XScale 1;
+		YScale 1;
+		-NOPAIN
+		-COUNTKILL
+		-NODAMAGE
+		-NEVERTARGET
+		+LOOKALLAROUND
+		+FLOORCLIP
+		+FRIENDLY
+		+NOTAUTOAIMED
+		+SHOOTABLE
+		+SLIDESONWALLS
+		+DONTMORPH
+		+AVOIDHAZARDS
+		+NOBLOCKMONST
+		-FALLDAMAGE
+		+ALWAYSRESPAWN
+		+QUICKTORETALIATE
+		+NOICEDEATH
+		+BUDDHA
+		+AVOIDMELEE
+		+BOSS
+		MaxStepHeight 48;
+		MaxDropOffHeight 48;
+		SeeSound "Ralsei/See";
+		PainSound "Ralsei/Pain";
+		DamageFactor "BFD", 0;
+		DamageFactor "FRD", 0;
+	}
+	override int TakeSpecialDamage(Actor inflictor, Actor source, int damage, Name damagetype)
+	{
+		// if (source && (source.player || source is "RalseiGun_Ralsei"))
+		// {
+			// Console.Printf("\cdRalsei: Hey, stop it!");;
+			// return 0;
+		// }
+		return super.TakeSpecialDamage(inflictor, source, damage, damagetype);
+	}
+	Override Void PostBeginPlay()
+	{
+		Super.PostBeginPlay();
+		
+		Console.Printf("\cdRalsei: Let's do this!");;
+		A_StartSound("Ralsei/Speak1",CHAN_VOICE);
+		// A_StartSound("FM/IntroSFX",CHAN_AUTO);
+	}
+	override void Tick() 
+	{
+		super.Tick();
+		if (isFrozen())
+		{
+			return;
+		}
+		if (FALSE) // (!master)
+		{
+			Spawn("TeleportFog", (pos.x, pos.y, pos.z + height * 0.5));
+			Destroy();
+			return;
+		}
+		if (health < default.health)
+		{
+			A_SetHealth(health + 1);
+		}
+		if (health <= 5 && !InStateSequence(curstate, FindState("FakeDeath")))
+		{
+			A_SetHealth(default.health);
+			SetStateLabel("FakeDeath");
+		}
+	}
+	Override bool CanCollideWith(Actor other, bool Passive)
+	{
+		If(!Other) 
+		Return False;
+		If(Other && !Passive)
+		{
+			If(Other.Player)
+			{
+				If(!Deathmatch) 
+				Return False;
+				Else If(Deathmatch && Other == Master) 
+				Return False;
+			}			
+			If(Other.bMISSILE && Other.Target && Other.Target.Player)
+			{
+				If(!Deathmatch) 
+				Return False;
+				Else If(Deathmatch && Other.Target == Master) 
+				Return False;
+			}			
+			Return True;
+		}
+		If(Other && Passive)
+		{
+			If(Other.Player)
+			{
+				If(!Deathmatch) 
+				Return False;
+				Else If(Deathmatch && Other == Master) 
+				Return False;
+			}			
+			If(Other.bMISSILE && Other.Target && Other.Target.Player)
+			{
+				If(!Deathmatch) 
+				Return False;
+				Else If(Deathmatch && Other.Target == Master) 
+				Return False;
+			}
+			Return True;
+		}
+		Return True;
+	}	
+	States
+	{
+    Spawn:
+		RALS D 1 Bright A_Look;
+		TNT1 A 0 A_CheckSight("TeleTic");
+		Loop;
+	See:
+		RALS AAAABBBBCCCCDDDD 1 Bright
+		{
+			If (Master && Distance3D(master) < 150)
+			{
+				Return ResolveState("Stand");
+			}
+			If (CheckInventory("RalseiGun_Stay", 1, AAPTR_MASTER))
+			{
+				SetStateLabel("Stand");
+			}
+			A_Chase("_a_chase_default", "_a_chase_default", CHF_FASTCHASE);
+			A_Recoil(-1);
+			Return ResolveState(Null);
+		}
+		// TNT1 A 0 A_JumpIfInventory("RalseiGun_Stay", 1, "Stand");
+		TNT1 A 0 A_JumpIfHealthLower(30, "Heal", AAPTR_MASTER);
+		TNT1 A 0 A_CheckSight("TeleTic");
+		Loop;
+	// Stay:
+		// TNT1 AA 0
+		/// Loop;
+	Stand:
+		RALS D 1 Bright
+		{ 
+			If (IdleTic >= GetCVar("RalseiGun_RalseiBlinkTalk"))
+            {
+                IdleTic = 0;
+				// A_StartSound("FM/Idle", CHAN_VOICE);
+				// A_StartSound("FM/IntroSFX",CHAN_AUTO);
+            }
+            IdleTic++;
+			A_Chase(Null,"Missile",CHF_NOPLAYACTIVE|CHF_DONTMOVE);
+		}
+		TNT1 A 0 A_JumpIfHealthLower(30, "Heal", AAPTR_MASTER);
+		Goto See;
+	Heal:
+      TNT1 A 0 A_JumpIfInventory("RalseiGun_HealPowerUp", 1, "Stand");
+      TNT1 A 0 A_GiveInventory("RalseiGun_HealCD", 1);
+		TNT1 A 0 A_ClearTarget;
+		RLHE A 1 Bright;
+		TNT1 A 0 A_StartSound("Ralsei/HealA");
+		RLHE A 2 Bright;
+		RLHE BCDEFGH 3 Bright;
+		TNT1 A 0 A_StartSound("Ralsei/HealB");
+		TNT1 A 0 A_GiveInventory("RalseiGun_RalseiHealThing", 1, AAPTR_MASTER);
+		RLHE IJKLM 3 Bright;
+		Goto Stand;
+	TeleTic:
+        TNT1 A 0 
+        {
+            if (teletic >= 5)
+            {
+            A_ClearTarget();
+				teletic = 0;
+				SetStateLabel("Teleport");
+            }
+			teletic++;
+        }
+        Goto See;
+	Teleport:
+		TNT1 A 0
+		{
+			bSHOOTABLE = false;
+			bNEVERTARGET = true;
+		}
+		TNT1 A 0 A_StartSound("Ralsei/Revived", CHAN_VOICE);
+		RLRU JIGFEDCBA 2 Bright;
+		TNT1 A 10;
+		TNT1 A 0 A_Warp(AAPTR_MASTER, 32, -32, 0, 0, WARPF_STOP|WARPF_TOFLOOR|WARPF_COPYINTERPOLATION);
+		TNT1 A 0 A_StartSound("Ralsei/Revived", CHAN_VOICE);
+		RLRU ABCDEFGIJ 2 Bright;
+		TNT1 A 0
+		{
+			bSHOOTABLE = true;
+			bNEVERTARGET = false;
+		}
+		Goto See;
+	Melee:
+		TNT1 A 0 Bright A_Jump(64,"Missile");
+		RALS A 2 Bright;
+		TNT1 A 0
+		{
+			IdleTic = 0;
+			A_FaceTarget();
+			A_Recoil(-3);
+		}
+		RALS E 6 Bright A_CustomMeleeAttack(random(5,10)*random(5,10),"FM/Punch");
+		RALS A 2 Bright;
+		Goto See;
+	Missile:
+		TNT1 A 0 A_Jump(85,"Chaingun");
+		TNT1 A 0 A_Jump(75,"SuperShotgun");
+		TNT1 A 0 A_Jump(55,"Rocket");
+		TNT1 A 0 A_Jump(30,"Plasma");
+	Shotgun:
+		TNT1 A 0 A_ChangeVelocity(random(2,10), random(-10,10), random(1,2),CVF_RELATIVE);
+		RALS E 1 Bright A_FaceTarget;
+		RALS F 2 Bright
+		{
+			IdleTic = 0;
+			A_StartSound("weapons/shotgf", CHAN_WEAPON);
+			A_ChangeVelocity(random(2,10), random(-10,10), random(1,2),CVF_RELATIVE);
+			A_FaceTarget();
+			A_AlertMonsters(0,AMF_TARGETEMITTER);
+			A_CustomBulletAttack(5.6, 0, 7, 5, "FriendMarinePuff");
+		}
+		RALS F 6 Bright A_ChangeVelocity(random(2,10), random(-10,10), random(1,2),CVF_RELATIVE);
+		RALS E 1 Bright;
+		RALS AAAABBBBCCCCDDDD 1 Bright A_Chase(NULL,NULL,CHF_FASTCHASE);
+		RALS AAAABBBBCCC 1 Bright A_Chase(NULL,NULL,CHF_FASTCHASE);
+		Goto See;
+	SuperShotgun:
+		TNT1 A 0 A_ChangeVelocity(random(2,10), random(-10,10), random(1,2),CVF_RELATIVE);
+		RALS E 1 Bright A_FaceTarget;
+		RALS F 1 Bright 
+		{
+			IdleTic = 0;
+			A_StartSound ("weapons/sshotf", CHAN_WEAPON);
+			A_CustomBulletAttack (11.2, 7.1, 20, 5, "FriendMarinePuff");
+			A_AlertMonsters(0,AMF_TARGETEMITTER);
+			A_ChangeVelocity(random(2,10), random(-10,10), random(1,2),CVF_RELATIVE);
+		}
+		RALS F 6 Bright A_ChangeVelocity(random(2,10), random(-10,10), random(1,2),CVF_RELATIVE);
+		RALS E 1 Bright;
+		RALS AAAABBBBCCCCD 1 Bright A_Chase(NULL,NULL,CHF_FASTCHASE);
+		TNT1 A 0 A_StartSound ("weapons/sshoto", CHAN_WEAPON);
+		RALS DDAAAABBBBCCC 1 Bright A_Chase(NULL,NULL,CHF_FASTCHASE);
+		TNT1 A 0 A_StartSound ("weapons/sshotl", CHAN_WEAPON);
+		RALS CDDDDAAAABBBB 1 Bright A_Chase(NULL,NULL,CHF_FASTCHASE);
+		TNT1 A 0 A_StartSound ("weapons/sshotc", CHAN_WEAPON);
+		RALS CCCCDDDD 1 Bright A_Chase(NULL,NULL,CHF_FASTCHASE);
+		Goto See;
+	Chaingun:
+		RALS E 2 Bright A_FaceTarget;
+		RALS F 2 Bright 
+		{	
+			IdleTic = 0;
+			A_StartSound("weapons/chngun", CHAN_WEAPON);
+			A_CustomBulletAttack(5.6, 0, 1, 5, "FriendMarinePuff");
+			A_AlertMonsters(0,AMF_TARGETEMITTER);
+			A_ChangeVelocity(random(2,10), random(-10,10), random(1,2),CVF_RELATIVE);
+			A_Chase(NULL,NULL,CHF_FASTCHASE);
+		}
+		RALS E 2 Bright A_FaceTarget;
+		RALS F 2 Bright 
+		{	
+			A_StartSound("weapons/chngun", CHAN_WEAPON);
+			A_CustomBulletAttack(5.6, 0, 1, 5, "FriendMarinePuff");
+		}
+		RALS E 2 Bright A_FaceTarget;
+		RALS F 2 Bright 
+		{	
+			A_StartSound("weapons/chngun", CHAN_WEAPON);
+			A_CustomBulletAttack(5.6, 0, 1, 5, "FriendMarinePuff");
+			A_AlertMonsters(0,AMF_TARGETEMITTER);
+			A_ChangeVelocity(random(2,10), random(-10,10), random(1,2),CVF_RELATIVE);
+			A_Chase(NULL,NULL,CHF_FASTCHASE);
+		}
+		RALS E 2 Bright A_FaceTarget;
+		RALS F 2 Bright 
+		{	
+			A_StartSound("weapons/chngun", CHAN_WEAPON);
+			A_CustomBulletAttack(5.6, 0, 1, 5, "FriendMarinePuff");
+			A_AlertMonsters(0,AMF_TARGETEMITTER);
+		}
+		TNT1 A 0 A_Jump(166,"See");
+		TNT1 A 0 A_MonsterRefire(0,"See");
+		Goto Chaingun;
+	Rocket:
+		TNT1 A 0 A_ChangeVelocity(random(2,10), random(-10,10), random(1,2),CVF_RELATIVE);
+		RALS E 1 Bright A_FaceTarget;
+		RALS F 8 Bright 
+		{
+			IdleTic = 0;
+			A_SpawnProjectile("FriendRocketProjectile");
+			A_ChangeVelocity(random(2,10), random(-10,10), random(1,2),CVF_RELATIVE);
+			A_AlertMonsters(0,AMF_TARGETEMITTER);
+		}
+		RALS E 1 Bright;
+		Goto See;
+	Plasma:
+		RALS E 2 Bright A_FaceTarget;
+		RALS F 1 Bright 
+		{
+			IdleTic = 0;
+			A_SpawnProjectile("FriendPlasmaBall");
+			A_ChangeVelocity(random(2,10), random(-10,10), random(1,2),CVF_RELATIVE);
+			A_AlertMonsters(0,AMF_TARGETEMITTER);
+		}
+		RALS E 2 Bright A_Chase(NULL,NULL,CHF_FASTCHASE);
+		RALS F 1 Bright 
+		{
+			A_FaceTarget();
+			A_SpawnProjectile("FriendPlasmaBall");
+			A_AlertMonsters(0,AMF_TARGETEMITTER);
+		}
+		RALS E 2 Bright A_Chase(NULL,NULL,CHF_FASTCHASE);
+		RALS F 1 Bright 
+		{
+			A_FaceTarget();
+			A_SpawnProjectile("FriendPlasmaBall");
+			A_ChangeVelocity(random(2,10), random(-10,10), random(1,2),CVF_RELATIVE);
+			A_AlertMonsters(0,AMF_TARGETEMITTER);
+		}
+		RALS E 2 Bright A_Chase(NULL,NULL,CHF_FASTCHASE);
+		RALS F 1 Bright 
+		{
+			A_FaceTarget();
+			A_SpawnProjectile("FriendPlasmaBall");
+			A_AlertMonsters(0,AMF_TARGETEMITTER);
+		}
+		RALS E 1 Bright;
+		TNT1 A 0 A_Jump(166,"See");
+		TNT1 A 0 A_MonsterRefire(0,"See");
+		Goto Plasma;
+	Pain:
+		RALS G 2 Bright A_ChangeVelocity(random(2,10), random(-10,10), random(1,2),CVF_RELATIVE);
+		RALS G 2 Bright Fast
+		{
+			A_StartSound("Ralsei/Pain", CHAN_BODY, CHANF_DEFAULT, 5.0, ATTN_NONE);
+			A_ChangeVelocity(random(2,10), random(-10,10), random(1,2),CVF_RELATIVE);
+		}
+		TNT1 A 0 A_ChangeVelocity(random(1,4), random(-5,5), random(1,2),CVF_RELATIVE);
+		Goto See;
+	FakeDeath:
+		TNT1 A 0 
+		{
+			bNEVERTARGET = true;
+			bSHOOTABLE = false;
+		}
+		TNT1 A 0 A_StartSound("Ralsei/Explode", CHAN_BODY, CHANF_DEFAULT, 1.0, ATTN_NONE);
+		RPRL ABCDEFGHIJKLMNOPQ 3 Bright;
+		RLDR AAA 3 Bright;
+		RLDR AAAABBB 1 Bright;
+		TNT1 A 0 A_StartSound("Ralsei/Revive");
+		RLDR CCC 1 Bright;
+		RLDR DEFGHIJKKK 3 Bright;
+		RLDR L 100;
+		TNT1 A 0 A_Warp(AAPTR_MASTER, 32, -32, 4120412, 0, WARPF_STOP|WARPF_TOFLOOR);
+		// TNT1 A 0 A_StartSound("Ralsei/Death", CHAN_BODY, CHANF_DEFAULT, 1.5, ATTN_NONE);
+		// RALS A 50 Bright;
+		// TNT1 A 0
+		// {
+			// bNEVERTARGET = false;
+		// }
+		// TNT1 A 0 A_StartSound("Ralsei/Explode", CHAN_BODY, CHANF_DEFAULT, 1.0, ATTN_NONE);
+		// RALD ABCDEFG 3 Bright;
+		// RALD G 100;
+	FakeRaise:
+		TNT1 A 0 
+		{
+			A_StartSound("Ralsei/Revived", CHAN_VOICE);
+		}
+		TNT1 A 0
+		{
+			A_Warp(AAPTR_MASTER, 32, -32, 0, 0, WARPF_STOP|WARPF_TOFLOOR|WARPF_COPYINTERPOLATION);
+		}
+		RLRU ABCDEFGIJ 3 Bright;
+		TNT1 A 0
+		{
+			bSHOOTABLE = true;
+			bNEVERTARGET = false;
+		}
+		Goto See;
+    }
+}

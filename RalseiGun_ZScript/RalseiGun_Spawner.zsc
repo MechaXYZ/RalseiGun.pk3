@@ -1,0 +1,15 @@
+Class RalseiGun_RalseiSpawnHandler : EventHandler
+{
+	Override Void PlayerEntered(PlayerEvent e)
+	{
+		Let pl = players[e.PlayerNumber].mo;
+		
+		let dke = pl.Spawn("RalseiGun_Ralsei",pl.pos,ALLOW_REPLACE);
+		If(dke)
+		{
+			dke.Master = pl;
+			dke.Translation = pl.Translation;
+			dke.A_FaceMaster();
+		}
+	}
+}

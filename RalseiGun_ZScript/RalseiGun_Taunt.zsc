@@ -1,0 +1,19 @@
+Class RalseiGun_RalseiTauntHandler : EventHandler
+{
+	Override Void WorldThingDied(WorldEvent e)
+	{
+		Let victim = e.Thing;
+		Let source = e.Thing.Target;		
+		If((victim.bISMONSTER || victim.bCOUNTKILL) && source is "RalseiGun_Ralsei")
+		{
+			If(Source && Source.Health > 0)			
+			{
+				If(Random(0,100) <= 10 || Victim.bBOSS) 
+				{ 
+					Console.Printf("\cdRalsei: We make a good team!");
+					Source.A_StartSound("Ralsei/Speak1",CHAN_VOICE);
+				}
+			}
+		}
+	}
+}
