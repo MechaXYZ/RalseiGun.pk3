@@ -1,0 +1,15 @@
+
+AddOptionMenu "OptionsMenu"
+{
+    StaticText ""
+    Submenu "Ralsei Options", "blnk_options"
+}
+
+OptionMenu "blnk_options"
+{
+	Title "Ralsei Options"
+	StaticText "Ralsei Options", gold
+	StaticText " "	
+	Slider "Tics until Ralsei talks when Idle", "RalseiGun_RalseiBlinkTalk", 5, 2000, 50
+	StaticText " "
+}

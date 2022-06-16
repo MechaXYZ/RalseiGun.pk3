@@ -1,0 +1,5 @@
+GameInfo
+{
+	AddEventHandlers = "RalseiGun_RalseiSpawnHandler"
+	AddEventHandlers = "RalseiGun_RalseiTauntHandler"
+}

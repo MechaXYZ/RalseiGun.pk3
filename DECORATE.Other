@@ -1,0 +1,104 @@
+ACTOR FriendMarinePuff : BulletPuff
+{
+	DamageType "FRD"
+}
+
+ACTOR FriendMarineProtection : PowerProtection
+{
+	+INVENTORY.HUBPOWER
+	+INVENTORY.PERSISTENTPOWER
+	DamageFactor "FriendMarineDamage", 0
+	Powerup.Duration -0xFFFFFF
+}
+
+
+ACTOR FriendRocketProjectile
+{
+	Radius 11
+	Height 8
+	Speed 20
+	Damage 20
+	Projectile
+	+RANDOMIZE
+	+DEHEXPLOSION
+	+ROCKETTRAIL
+	SeeSound "weapons/rocklf"
+	DeathSound "weapons/rocklx"
+	DamageType "FRD"
+	States
+	{
+	Spawn:
+		MISL A 1 Bright
+		Loop
+	Death:
+		MISL B 8 Bright A_Explode
+		MISL C 6 Bright
+		MISL D 4 Bright
+		Stop
+	}
+}
+
+ACTOR FriendPlasmaBall
+{
+	Radius 13
+	Height 8
+	Speed 25
+	Damage 5
+	Projectile
+	+RANDOMIZE
+	+ZDOOMTRANS
+	RenderStyle Add
+	Alpha 0.75
+	SeeSound "weapons/plasmaf"
+	DeathSound "weapons/plasmax"
+	DamageType "FRD"
+	States
+	{
+	Spawn:
+		PLSS AB 6 Bright
+		Loop
+	Death:
+		PLSE ABCDE 4 Bright
+		Stop
+	}
+}
+
+ACTOR FriendBFGBall
+{
+	Radius 13
+	Height 8
+	Speed 25
+	Damage 75
+	Projectile
+	+RANDOMIZE
+	RenderStyle Add
+	Alpha 0.75
+	DeathSound "weapons/bfgx"
+	DamageType "FRD"
+	States
+	{
+	Spawn:
+		BFS1 AB 4 Bright
+		Loop
+	Death:
+		BFE1 AB 8 Bright
+		BFE1 C 8 Bright A_BFGSpray("FriendBFGAttack")
+		BFE1 DEF 8 Bright
+		Stop
+	}
+}
+
+ACTOR FriendBFGAttack
+{
+	+NOBLOCKMAP
+	+NOGRAVITY
+	RenderStyle Add
+	Alpha 0.75
+	DamageType "FRD"
+	States
+	{
+	Spawn:
+		BFE2 ABCD 8 Bright
+		Stop
+	}
+}
