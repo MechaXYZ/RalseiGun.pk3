@@ -4,12 +4,17 @@ Class RalseiGun_RalseiSpawnHandler : EventHandler
 	{
 		Let pl = players[e.PlayerNumber].mo;
 		
-		let dke = pl.Spawn("RalseiGun_Ralsei",pl.pos,ALLOW_REPLACE);
+		let dke = pl.Spawn("RalseiGun_Ralsei", pl.pos, ALLOW_REPLACE);
 		If(dke)
 		{
 			dke.Master = pl;
 			dke.Translation = pl.Translation;
 			dke.A_FaceMaster();
+			if (pl.FindInventory("RalseiGun_PassivePowerup"))
+				pl.TakeInventory("RalseiGun_PassivePowerup", 1);
+			if (!pl.FindInventory("RalseiGun_PassivePowerup"))
+				pl.GiveInventory("RalseiGun_PassivePowerup", 1);
+				Console.Printf("Ralsei is now passive.");
 		}
 	}
 }

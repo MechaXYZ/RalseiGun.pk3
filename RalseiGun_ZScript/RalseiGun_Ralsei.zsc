@@ -1,9 +1,9 @@
+// powerups for stuff
 class RalseiGun_StayPowerup : Powerup
 {
 	Default
 	{
-   	Powerup.Duration -2147483647; // 68 fucking years
-		Inventory.PickupMessage "You got the.. Ralsei Stay Powerup?";
+   	    Powerup.Duration -2147483647; // 68 fucking years
 	}
 }
 
@@ -11,9 +11,8 @@ class RalseiGun_Stay : PowerupGiver
 {
 	Default
 	{
-   	Powerup.Type "RalseiGun_StayPowerup";
-		Inventory.PickupMessage "You got the.. Ralsei Stay Powerup?";
-   	+INVENTORY.AUTOACTIVATE;
+   	    Powerup.Type "RalseiGun_StayPowerup";
+   	    +INVENTORY.AUTOACTIVATE;
 		+INVENTORY.UNDROPPABLE;
 		+INVENTORY.PERSISTENTPOWER;
 	}
@@ -23,7 +22,7 @@ class RalseiGun_PassivePowerup : Powerup
 {
 	Default
 	{
-   	Powerup.Duration -2147483647; // 68 fucking years
+   	    Powerup.Duration -2147483647; // 68 fucking years
 	}
 }
 
@@ -31,11 +30,10 @@ class RalseiGun_Passive : PowerupGiver
 {
 	Default
 	{
-   	Powerup.Type "RalseiGun_PassivePowerup";
-   	+INVENTORY.AUTOACTIVATE;
+   	    Powerup.Type "RalseiGun_PassivePowerup";
+   	    +INVENTORY.AUTOACTIVATE;
 		+INVENTORY.UNDROPPABLE;
 		+INVENTORY.PERSISTENTPOWER;
-		+INVENTORY.QUIET;
 	}
 }
 
@@ -43,7 +41,7 @@ class RalseiGun_ActivePowerup : Powerup
 {
 	Default
 	{
-   	Powerup.Duration -2147483647; // 68 fucking years
+   	    Powerup.Duration -2147483647; // 68 fucking years
 	}
 }
 
@@ -51,11 +49,10 @@ class RalseiGun_Active : PowerupGiver
 {
 	Default
 	{
-   	Powerup.Type "RalseiGun_ActivePowerup";
-   	+INVENTORY.AUTOACTIVATE;
+   	    Powerup.Type "RalseiGun_ActivePowerup";
+    	+INVENTORY.AUTOACTIVATE;
 		+INVENTORY.UNDROPPABLE;
 		+INVENTORY.PERSISTENTPOWER;
-		+INVENTORY.QUIET;
 	}
 }
 
@@ -63,7 +60,7 @@ class RalseiGun_HealPowerUp : Powerup
 {
 	Default
 	{
-   	Powerup.Duration -15;
+   	    Powerup.Duration -15;
 	}
 }
 
@@ -71,10 +68,9 @@ class RalseiGun_HealCD : PowerupGiver
 {
 	Default
 	{
-   	Powerup.Type "RalseiGun_HealPowerUp";
-   	+INVENTORY.AUTOACTIVATE;
-		+INVENTORY.UNDROPPABLE;
-		+INVENTORY.QUIET;
+   	    Powerup.Type "RalseiGun_HealPowerUp";
+   	    +INVENTORY.AUTOACTIVATE;
+	    +INVENTORY.UNDROPPABLE;
 	}
 }
 
@@ -88,10 +84,16 @@ class RalseiGun_RalseiHealThing: Medikit
     } 
 }
 
+// ralsei!
 class RalseiGun_Ralsei : Actor
 {
 	Int IdleTic;
 	Int TeleTic;
+	Int CGChance; // 85
+	Int SSGChance; // 75
+	Int RLChance; // 55
+	Int PGChance; // 30
+	Int RangeChance; // 65
 	Default
 	{
 		Monster;
@@ -130,20 +132,30 @@ class RalseiGun_Ralsei : Actor
 		PainSound "Ralsei/Pain";
 		DamageFactor "BFD", 0;
 		DamageFactor "FRD", 0;
+        MaxTargetRange 0;
 	}
 	override int TakeSpecialDamage(Actor inflictor, Actor source, int damage, Name damagetype)
 	{
+		// remember to make ralsei guard when the player shoots or hits him
 		// if (source && (source.player || source is "RalseiGun_Ralsei"))
 		// {
 			// Console.Printf("\cdRalsei: Hey, stop it!");;
 			// return 0;
 		// }
+        A_StartSound("Ralsei/Pain", CHAN_BODY, CHANF_DEFAULT, 10.0, ATTN_NONE);
 		return super.TakeSpecialDamage(inflictor, source, damage, damagetype);
 	}
 	Override Void PostBeginPlay()
 	{
 		Super.PostBeginPlay();
-		
+
+		// remember to make it wait a little bit before ralsei does his intro
+		// set chances
+		CGChance = 0; // default: 85
+		SSGChance = 0; // default: 75
+		RLChance = 0; // default: 55
+		PGChance = 0; // default: 30
+		RangeChance = 0; // default: 64
 		Console.Printf("\cdRalsei: Let's do this!");;
 		A_StartSound("Ralsei/Speak1",CHAN_VOICE);
 		// A_StartSound("FM/IntroSFX",CHAN_AUTO);
@@ -155,7 +167,7 @@ class RalseiGun_Ralsei : Actor
 		{
 			return;
 		}
-		if (FALSE) // (!master)
+		if (FALSE) // (!master) i might delete this
 		{
 			Spawn("TeleportFog", (pos.x, pos.y, pos.z + height * 0.5));
 			Destroy();
@@ -223,24 +235,21 @@ class RalseiGun_Ralsei : Actor
 		RALS AAAABBBBCCCCDDDD 1 Bright
 		{
 			If (Master && Distance3D(master) < 150)
+			{   
+				Return ResolveState("Stand");
+			}
+			If (CheckInventory("RalseiGun_StayPowerup", 1, AAPTR_MASTER))
 			{
 				Return ResolveState("Stand");
 			}
-			If (CheckInventory("RalseiGun_Stay", 1, AAPTR_MASTER))
-			{
-				SetStateLabel("Stand");
-			}
-			A_Chase("_a_chase_default", "_a_chase_default", CHF_FASTCHASE);
+            A_Chase(Null, Null, CHF_FASTCHASE);
 			A_Recoil(-1);
 			Return ResolveState(Null);
 		}
-		// TNT1 A 0 A_JumpIfInventory("RalseiGun_Stay", 1, "Stand");
+		TNT1 A 0 A_JumpIfInventory("RalseiGun_StayPowerup", 1, "Stand");
 		TNT1 A 0 A_JumpIfHealthLower(30, "Heal", AAPTR_MASTER);
 		TNT1 A 0 A_CheckSight("TeleTic");
 		Loop;
-	// Stay:
-		// TNT1 AA 0
-		/// Loop;
 	Stand:
 		RALS D 1 Bright
 		{ 
@@ -251,13 +260,13 @@ class RalseiGun_Ralsei : Actor
 				// A_StartSound("FM/IntroSFX",CHAN_AUTO);
             }
             IdleTic++;
-			A_Chase(Null,"Missile",CHF_NOPLAYACTIVE|CHF_DONTMOVE);
+            A_Chase(Null, "Missile", CHF_NOPLAYACTIVE|CHF_DONTMOVE);
 		}
 		TNT1 A 0 A_JumpIfHealthLower(30, "Heal", AAPTR_MASTER);
 		Goto See;
 	Heal:
-      TNT1 A 0 A_JumpIfInventory("RalseiGun_HealPowerUp", 1, "Stand");
-      TNT1 A 0 A_GiveInventory("RalseiGun_HealCD", 1);
+        TNT1 A 0 A_JumpIfInventory("RalseiGun_HealPowerup", 1, "Stand");
+        TNT1 A 0 A_GiveInventory("RalseiGun_HealCD", 1);
 		TNT1 A 0 A_ClearTarget;
 		RLHE A 1 Bright;
 		TNT1 A 0 A_StartSound("Ralsei/HealA");
@@ -298,7 +307,7 @@ class RalseiGun_Ralsei : Actor
 		}
 		Goto See;
 	Melee:
-		TNT1 A 0 Bright A_Jump(64,"Missile");
+		TNT1 A 0 Bright A_Jump(RangeChance, "Missile");
 		RALS A 2 Bright;
 		TNT1 A 0
 		{
@@ -310,11 +319,13 @@ class RalseiGun_Ralsei : Actor
 		RALS A 2 Bright;
 		Goto See;
 	Missile:
-		TNT1 A 0 A_Jump(85,"Chaingun");
-		TNT1 A 0 A_Jump(75,"SuperShotgun");
-		TNT1 A 0 A_Jump(55,"Rocket");
-		TNT1 A 0 A_Jump(30,"Plasma");
+		TNT1 A 0 A_JumpIfInventory("RalseiGun_PassivePowerup", 1, "See");
+		TNT1 A 0 A_Jump(CGChance,"Chaingun");
+		TNT1 A 0 A_Jump(SSGChance,"SuperShotgun");
+		TNT1 A 0 A_Jump(RLChance,"Rocket");
+		TNT1 A 0 A_Jump(PGChance,"Plasma");
 	Shotgun:
+
 		TNT1 A 0 A_ChangeVelocity(random(2,10), random(-10,10), random(1,2),CVF_RELATIVE);
 		RALS E 1 Bright A_FaceTarget;
 		RALS F 2 Bright
@@ -332,6 +343,7 @@ class RalseiGun_Ralsei : Actor
 		RALS AAAABBBBCCC 1 Bright A_Chase(NULL,NULL,CHF_FASTCHASE);
 		Goto See;
 	SuperShotgun:
+
 		TNT1 A 0 A_ChangeVelocity(random(2,10), random(-10,10), random(1,2),CVF_RELATIVE);
 		RALS E 1 Bright A_FaceTarget;
 		RALS F 1 Bright 
@@ -353,6 +365,7 @@ class RalseiGun_Ralsei : Actor
 		RALS CCCCDDDD 1 Bright A_Chase(NULL,NULL,CHF_FASTCHASE);
 		Goto See;
 	Chaingun:
+
 		RALS E 2 Bright A_FaceTarget;
 		RALS F 2 Bright 
 		{	
@@ -385,10 +398,11 @@ class RalseiGun_Ralsei : Actor
 			A_CustomBulletAttack(5.6, 0, 1, 5, "FriendMarinePuff");
 			A_AlertMonsters(0,AMF_TARGETEMITTER);
 		}
-		TNT1 A 0 A_Jump(166,"See");
-		TNT1 A 0 A_MonsterRefire(0,"See");
+		TNT1 A 0 A_Jump(166, "See");
+		TNT1 A 0 A_MonsterRefire(0, "See");
 		Goto Chaingun;
 	Rocket:
+
 		TNT1 A 0 A_ChangeVelocity(random(2,10), random(-10,10), random(1,2),CVF_RELATIVE);
 		RALS E 1 Bright A_FaceTarget;
 		RALS F 8 Bright 
@@ -401,6 +415,7 @@ class RalseiGun_Ralsei : Actor
 		RALS E 1 Bright;
 		Goto See;
 	Plasma:
+
 		RALS E 2 Bright A_FaceTarget;
 		RALS F 1 Bright 
 		{
@@ -409,6 +424,7 @@ class RalseiGun_Ralsei : Actor
 			A_ChangeVelocity(random(2,10), random(-10,10), random(1,2),CVF_RELATIVE);
 			A_AlertMonsters(0,AMF_TARGETEMITTER);
 		}
+
 		RALS E 2 Bright A_Chase(NULL,NULL,CHF_FASTCHASE);
 		RALS F 1 Bright 
 		{
@@ -416,6 +432,7 @@ class RalseiGun_Ralsei : Actor
 			A_SpawnProjectile("FriendPlasmaBall");
 			A_AlertMonsters(0,AMF_TARGETEMITTER);
 		}
+
 		RALS E 2 Bright A_Chase(NULL,NULL,CHF_FASTCHASE);
 		RALS F 1 Bright 
 		{
@@ -424,6 +441,7 @@ class RalseiGun_Ralsei : Actor
 			A_ChangeVelocity(random(2,10), random(-10,10), random(1,2),CVF_RELATIVE);
 			A_AlertMonsters(0,AMF_TARGETEMITTER);
 		}
+
 		RALS E 2 Bright A_Chase(NULL,NULL,CHF_FASTCHASE);
 		RALS F 1 Bright 
 		{
@@ -431,6 +449,7 @@ class RalseiGun_Ralsei : Actor
 			A_SpawnProjectile("FriendPlasmaBall");
 			A_AlertMonsters(0,AMF_TARGETEMITTER);
 		}
+
 		RALS E 1 Bright;
 		TNT1 A 0 A_Jump(166,"See");
 		TNT1 A 0 A_MonsterRefire(0,"See");
@@ -439,35 +458,35 @@ class RalseiGun_Ralsei : Actor
 		RALS G 2 Bright A_ChangeVelocity(random(2,10), random(-10,10), random(1,2),CVF_RELATIVE);
 		RALS G 2 Bright Fast
 		{
-			A_StartSound("Ralsei/Pain", CHAN_BODY, CHANF_DEFAULT, 5.0, ATTN_NONE);
 			A_ChangeVelocity(random(2,10), random(-10,10), random(1,2),CVF_RELATIVE);
 		}
 		TNT1 A 0 A_ChangeVelocity(random(1,4), random(-5,5), random(1,2),CVF_RELATIVE);
 		Goto See;
 	FakeDeath:
-		TNT1 A 0 
-		{
-			bNEVERTARGET = true;
-			bSHOOTABLE = false;
-		}
+		/*
 		TNT1 A 0 A_StartSound("Ralsei/Explode", CHAN_BODY, CHANF_DEFAULT, 1.0, ATTN_NONE);
-		RPRL ABCDEFGHIJKLMNOPQ 3 Bright;
 		RLDR AAA 3 Bright;
 		RLDR AAAABBB 1 Bright;
 		TNT1 A 0 A_StartSound("Ralsei/Revive");
 		RLDR CCC 1 Bright;
 		RLDR DEFGHIJKKK 3 Bright;
 		RLDR L 100;
-		TNT1 A 0 A_Warp(AAPTR_MASTER, 32, -32, 4120412, 0, WARPF_STOP|WARPF_TOFLOOR);
-		// TNT1 A 0 A_StartSound("Ralsei/Death", CHAN_BODY, CHANF_DEFAULT, 1.5, ATTN_NONE);
-		// RALS A 50 Bright;
-		// TNT1 A 0
-		// {
-			// bNEVERTARGET = false;
-		// }
-		// TNT1 A 0 A_StartSound("Ralsei/Explode", CHAN_BODY, CHANF_DEFAULT, 1.0, ATTN_NONE);
-		// RALD ABCDEFG 3 Bright;
-		// RALD G 100;
+		*/
+		TNT1 A 0 
+		{
+			bNEVERTARGET = false;
+			bSHOOTABLE = true;
+		}
+		TNT1 A 0 A_StartSound("Ralsei/Death", CHAN_BODY, CHANF_DEFAULT, 1.5, ATTN_NONE);
+		RALS A 50 Bright;
+		TNT1 A 0
+		{
+			bNEVERTARGET = true;
+			bSHOOTABLE = false;
+		}
+		TNT1 A 0 A_StartSound("Ralsei/Explode", CHAN_BODY, CHANF_DEFAULT, 1.0, ATTN_NONE);
+		RALD ABCDEFG 3 Bright;
+		RALD G 100;
 	FakeRaise:
 		TNT1 A 0 
 		{
