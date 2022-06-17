@@ -8,11 +8,13 @@ Class RalseiGun_RalseiTauntHandler : EventHandler
 		{
 			If(Source && Source.Health > 0)			
 			{
-				If(Random(0,100) <= 10 || Victim.bBOSS) 
+				/*
+				If(Random(0,10) <= 10 || Victim.bBOSS) 
 				{ 
-					Console.Printf("\cdRalsei: We make a good team!");
+					Console.Printf("\cdRalsei: We did it, %s!", Source.master.player.GetUserName());
 					Source.A_StartSound("Ralsei/Speak1",CHAN_VOICE);
 				}
+				*/
 			}
 		}
 	}

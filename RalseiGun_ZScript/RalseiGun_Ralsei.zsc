@@ -18,6 +18,10 @@ class RalseiGun_Stay : PowerupGiver
 	}
 }
 
+/*
+
+might bring passive back if i find a way
+
 class RalseiGun_PassivePowerup : Powerup
 {
 	Default
@@ -36,6 +40,8 @@ class RalseiGun_Passive : PowerupGiver
 		+INVENTORY.PERSISTENTPOWER;
 	}
 }
+
+*/
 
 class RalseiGun_ActivePowerup : Powerup
 {
@@ -123,7 +129,7 @@ class RalseiGun_Ralsei : Actor
 		+QUICKTORETALIATE
 		+NOICEDEATH
 		+BUDDHA
-		+AVOIDMELEE
+		-AVOIDMELEE
 		+BOSS
 		MaxStepHeight 48;
 		MaxDropOffHeight 48;
@@ -153,8 +159,7 @@ class RalseiGun_Ralsei : Actor
 		RLChance = 55; // default: 55
 		PGChance = 30; // default: 30
 		RangeChance = 64; // default: 64
-		Console.Printf("\cdRalsei: Let's do this!");;
-		A_StartSound("Ralsei/Speak1",CHAN_VOICE);
+		SetStateLabel("Intro");
 		// A_StartSound("FM/IntroSFX",CHAN_AUTO);
 	}
 	override void Tick() 
@@ -229,12 +234,22 @@ class RalseiGun_Ralsei : Actor
 		TNT1 A 0 A_CheckSight("TeleTic");
 		// TNT1 A 0 A_SetSpecial(130, 0);
 		Loop;
+	Intro:
+		TNT1 A 0 A_Warp(AAPTR_MASTER, 48, -24, 0, 0, WARPF_STOP|WARPF_TOFLOOR|WARPF_COPYINTERPOLATION);
+		RABI A 15 Bright; // wait a bit 
+		TNT1 A 0
+		{
+			Console.Printf("\cdRalsei: Get ready, %s!", master.player.GetUserName());
+		}
+		TNT1 A 0 A_StartSound("Ralsei/Speak1", CHAN_VOICE);
+		RABI ABCDEFGHI 3 Bright;
+		Goto See;
 	Defend: 
 		TNT1 A 0
 		{
 			Console.Printf("\cdRalsei: %s, I'm not a demon!", master.player.GetUserName());
 		}
-		RLSD ABCDEFGH 3 Bright A_StartSound("Ralsei/Speak1",CHAN_VOICE);
+		RLSD ABCDEFGH 3 Bright A_StartSound("Ralsei/Speak1", CHAN_VOICE);
 		RLSD GFEDCBA 3 Bright;
 		Goto See;
 	Active:
@@ -246,13 +261,15 @@ class RalseiGun_Ralsei : Actor
 			{
 				pl.TakeInventory("RalseiGun_StayPowerup", 1);
 				pl.GiveInventory("RalseiGun_ActivePowerup", 1);
-				Console.Printf("Ralsei is now active.");
+				Console.Printf("\cdRalsei: Let's get back to battling!");
+				A_StartSound("Ralsei/Speak1", CHAN_VOICE);
 			}
 			else if (pl.FindInventory("RalseiGun_ActivePowerup"))
 			{
 				pl.TakeInventory("RalseiGun_ActivePowerup", 1);
 				pl.GiveInventory("RalseiGun_StayPowerup", 1);
-				Console.Printf("Ralsei is now inactive.");
+				Console.Printf("\cdRalsei: Okay %s, I'll stay here.", master.player.GetUserName());
+				A_StartSound("Ralsei/Speak1", CHAN_VOICE);
 			}
 			bUSESPECIAL = 1;
 		}
@@ -266,13 +283,15 @@ class RalseiGun_Ralsei : Actor
 			{
 				pl.TakeInventory("RalseiGun_StayPowerup", 1);
 				pl.GiveInventory("RalseiGun_ActivePowerup", 1);
-				Console.Printf("/cqRalsei: Let's get back to battling!");
+				Console.Printf("\cdRalsei: Let's get back to battling!");
+				A_StartSound("Ralsei/Speak1", CHAN_VOICE);
 			}
 			else if (pl.FindInventory("RalseiGun_ActivePowerup"))
 			{
 				pl.TakeInventory("RalseiGun_ActivePowerup", 1);
 				pl.GiveInventory("RalseiGun_StayPowerup", 1);
-				Console.Printf("/cqRalsei: Okay %s, I'll stay here.", master.player.GetUserName());
+				Console.Printf("\cdRalsei: Okay %s, I'll stay here.", master.player.GetUserName());
+				A_StartSound("Ralsei/Speak1", CHAN_VOICE);
 			}
 			bUSESPECIAL = 1;
 		}
@@ -280,7 +299,7 @@ class RalseiGun_Ralsei : Actor
 	See:
 		RALS AAAABBBBCCCCDDDD 1 Bright
 		{
-			If (Master && Distance3D(master) < 150)
+			If (Master && Distance3D(master) < 75)
 			{   
 				Return ResolveState("Stand");
 			}
@@ -288,7 +307,7 @@ class RalseiGun_Ralsei : Actor
 			{
 				Return ResolveState("Stand");
 			}
-            A_Chase(Null, "Missle", CHF_FASTCHASE);
+            A_Chase("Melee", Null /* "Missle" */, CHF_FASTCHASE);
 			A_Recoil(-1);
 			Return ResolveState(Null);
 		}
@@ -297,13 +316,13 @@ class RalseiGun_Ralsei : Actor
 		TNT1 A 0 A_CheckSight("TeleTic");
 		Loop;
 	Sit:
-		RLSS FFFFFG 1 Bright;
+		RLSS F 1 Bright;
 	Stand:
 		TNT1 A 0
 		{ 
 			if (CheckInventory("RalseiGun_StayPowerup", 1, AAPTR_MASTER))
 			{
-				Return ResolveState("Sit");
+				SetStateLabel("Sit");
 			}
 		}
 		RALS D 1 Bright
@@ -311,11 +330,9 @@ class RalseiGun_Ralsei : Actor
 			If (IdleTic >= GetCVar("RalseiGun_RalseiBlinkTalk"))
             {
                 IdleTic = 0;
-				// A_StartSound("FM/Idle", CHAN_VOICE); 
-				// A_StartSound("FM/IntroSFX",CHAN_AUTO);
             }
             IdleTic++;
-			A_Chase(Null, "Missile", CHF_NOPLAYACTIVE|CHF_DONTMOVE);
+			A_Chase("Melee", Null /* "Missile" */, CHF_NOPLAYACTIVE|CHF_DONTMOVE);
 		}
 		TNT1 A 0 A_JumpIfHealthLower(30, "Heal", AAPTR_MASTER);
 		Goto See;
@@ -363,23 +380,26 @@ class RalseiGun_Ralsei : Actor
 		Goto See;
 	Melee:
 		// TNT1 A 0 A_JumpIfInventory("RalseiGun_PassivePowerup", 1, "See");
-		TNT1 A 0 Bright A_Jump(RangeChance, "Missile");
-		RALS A 2 Bright;
+		// TNT1 A 0 Bright A_Jump(64, "Missile");
+		RATK A 2 Bright;
 		TNT1 A 0
 		{
 			IdleTic = 0;
 			A_FaceTarget();
 			A_Recoil(-3);
 		}
-		RALS E 6 Bright A_CustomMeleeAttack(random(5,10)*random(5,10),"FM/Punch");
-		RALS A 2 Bright;
+		RATK BCD 3 Bright;
+		RATK EF 3 Bright A_CustomMeleeAttack(random(5,10)*random(5,10),"Ralsei/Melee");
+		RALS DCBA 3 Bright;
 		Goto See;
+		/*
 	Missile:
 		// TNT1 A 0 A_JumpIfInventory("RalseiGun_PassivePowerup", 1, "See");
-		TNT1 A 0 A_Jump(CGChance,"Chaingun");
-		TNT1 A 0 A_Jump(SSGChance,"SuperShotgun");
-		TNT1 A 0 A_Jump(RLChance,"Rocket");
-		TNT1 A 0 A_Jump(PGChance,"Plasma");
+		TNT1 A 0 A_Jump(85,"Chaingun");
+		TNT1 A 0 A_Jump(75,"SuperShotgun");
+		TNT1 A 0 A_Jump(55,"Rocket");
+		TNT1 A 0 A_Jump(30,"Plasma");
+		*/
 	Shotgun:
 		// TNT1 A 0 A_JumpIfInventory("RalseiGun_PassivePowerup", 1, "See");
 		TNT1 A 0 A_ChangeVelocity(random(2,10), random(-10,10), random(1,2),CVF_RELATIVE);

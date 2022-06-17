@@ -3,7 +3,6 @@ Class RalseiGun_RalseiSpawnHandler : EventHandler
 	Override Void PlayerEntered(PlayerEvent e)
 	{
 		Let pl = players[e.PlayerNumber].mo;
-		
 		let dke = pl.Spawn("RalseiGun_Ralsei", pl.pos, ALLOW_REPLACE);
 		If(dke)
 		{
@@ -11,10 +10,17 @@ Class RalseiGun_RalseiSpawnHandler : EventHandler
 			dke.Translation = pl.Translation;
 			dke.A_FaceMaster();
 			if (pl.FindInventory("RalseiGun_ActivePowerup"))
+			{
 				pl.TakeInventory("RalseiGun_ActivePowerup", 1);
+			}
+			if (pl.FindInventory("RalseiGun_StayPowerup"))
+			{
+				pl.TakeInventory("RalseiGun_StayPowerup", 1);
+			}
 			if (!pl.FindInventory("RalseiGun_ActivePowerup"))
+			{
 				pl.GiveInventory("RalseiGun_ActivePowerup", 1);
-				Console.Printf("Ralsei is now active.");
+			}
 		}
 	}
 }

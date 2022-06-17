@@ -14,8 +14,4 @@ Ralsei/HealB	Sounds/Ralsei/RLWHIMPK.ogg
 
 Ralsei/See	Sounds/Ralsei/RALSEE.wav
 
-FM/IntroSFX	DSSGCOCK
-
-FM/Punch	DSPUNCH
-
-FM/Idle	DSOOF
+Ralsei/Melee    Sounds/Ralsei/RALSATK.wav
