@@ -228,7 +228,7 @@ class RalseiGun_Ralsei : Actor
 	States
 	{
     Spawn:
-		RALS D 1 Bright A_Look;
+		RALW D 1 Bright A_Look;
 		TNT1 A 0 A_CheckSight("TeleTic");
 		// TNT1 A 0 A_SetSpecial(130, 0);
 		Loop;
@@ -295,7 +295,7 @@ class RalseiGun_Ralsei : Actor
 		}
 		Goto See;
 	See:
-		RALS AAAABBBBCCCCDDDD 1 Bright
+		RALW AAAABBBBCCCCDDDD 1 Bright
 		{
 			If (Master && Distance3D(master) < 75)
 			{   
@@ -314,7 +314,7 @@ class RalseiGun_Ralsei : Actor
 		TNT1 A 0 A_CheckSight("TeleTic");
 		Loop;
 	Victory:
-		RALS AAAABBBBCCCCDDDD 3 Bright A_Chase(Null, Null, CHF_FASTCHASE);
+		RALW AAAABBBBCCCCDDDD 3 Bright A_Chase(Null, Null, CHF_FASTCHASE);
 		TNT1 A 0 A_StartSound("Ralsei/Speak1", CHAN_VOICE);
 		RALV ABCDEFGHIJK 3 Bright A_Stop;
 		Goto See;
@@ -328,7 +328,7 @@ class RalseiGun_Ralsei : Actor
 				SetStateLabel("Sit");
 			}
 		}
-		RALS D 1 Bright
+		RALW D 1 Bright
 		{ 
 			If (IdleTic >= GetCVar("RalseiGun_RalseiBlinkTalk"))
             {
@@ -394,7 +394,7 @@ class RalseiGun_Ralsei : Actor
 		RATK BCD 3 Bright;
 		TNT1 A 0 A_Stop;
 		RATK EF 3 Bright A_CustomMeleeAttack(random(5,10)*random(5,10),"Ralsei/Melee");
-		RALS DCBA 3 Bright;
+		RALW DCBA 3 Bright;
 		Goto See;
 	Missile:
 		// TNT1 A 0 A_JumpIfInventory("RalseiGun_PassivePowerup", 1, "See");
@@ -404,8 +404,8 @@ class RalseiGun_Ralsei : Actor
 		TNT1 A 0 A_Jump(30,"Plasma");
 	Shotgun:
 		TNT1 A 0 A_ChangeVelocity(random(2, 10), random(-10, 10), random(1, 2), CVF_RELATIVE);
-		RALS E 1 Bright A_FaceTarget;
-		RALS F 2 Bright
+		RALW E 1 Bright A_FaceTarget;
+		RALW F 2 Bright
 		{
 			IdleTic = 0;
 			A_StartSound("weapons/shotgf", CHAN_WEAPON);
@@ -414,15 +414,15 @@ class RalseiGun_Ralsei : Actor
 			A_AlertMonsters(0, AMF_TARGETEMITTER);
 			A_CustomBulletAttack(5.6, 0, 7, 5, "RalseiGun_Puff");
 		}
-		RALS F 6 Bright A_ChangeVelocity(random(2, 10), random(-10, 10), random(1, 2), CVF_RELATIVE);
-		RALS E 1 Bright;
-		RALS AAAABBBBCCCCDDDD 1 Bright A_Chase(Null, Null, CHF_FASTCHASE);
-		RALS AAAABBBBCCC 1 Bright A_Chase(Null, Null, CHF_FASTCHASE);
+		RALW F 6 Bright A_ChangeVelocity(random(2, 10), random(-10, 10), random(1, 2), CVF_RELATIVE);
+		RALW E 1 Bright;
+		RALW AAAABBBBCCCCDDDD 1 Bright A_Chase(Null, Null, CHF_FASTCHASE);
+		RALW AAAABBBBCCC 1 Bright A_Chase(Null, Null, CHF_FASTCHASE);
 		Goto See;
 	SuperShotgun:
 		TNT1 A 0 A_ChangeVelocity(random(2, 10), random(-10, 10), random(1, 2), CVF_RELATIVE);
-		RALS E 1 Bright A_FaceTarget;
-		RALS F 1 Bright 
+		RALW E 1 Bright A_FaceTarget;
+		RALW F 1 Bright 
 		{
 			IdleTic = 0;
 			A_StartSound ("weapons/sshotf", CHAN_WEAPON);
@@ -430,20 +430,20 @@ class RalseiGun_Ralsei : Actor
 			A_AlertMonsters(0,AMF_TARGETEMITTER);
 			A_ChangeVelocity(random(2, 10), random(-10, 10), random(1, 2), CVF_RELATIVE);
 		}
-		RALS F 6 Bright A_ChangeVelocity(random(2, 10), random(-10, 10), random(1, 2), CVF_RELATIVE);
-		RALS E 1 Bright;
-		RALS AAAABBBBCCCCD 1 Bright A_Chase(Null, Null, CHF_FASTCHASE);
+		RALW F 6 Bright A_ChangeVelocity(random(2, 10), random(-10, 10), random(1, 2), CVF_RELATIVE);
+		RALW E 1 Bright;
+		RALW AAAABBBBCCCCD 1 Bright A_Chase(Null, Null, CHF_FASTCHASE);
 		TNT1 A 0 A_StartSound ("weapons/sshoto", CHAN_WEAPON);
-		RALS DDAAAABBBBCCC 1 Bright A_Chase(Null, Null, CHF_FASTCHASE);
+		RALW DDAAAABBBBCCC 1 Bright A_Chase(Null, Null, CHF_FASTCHASE);
 		TNT1 A 0 A_StartSound ("weapons/sshotl", CHAN_WEAPON);
-		RALS CDDDDAAAABBBB 1 Bright A_Chase(Null, Null, CHF_FASTCHASE);
+		RALW CDDDDAAAABBBB 1 Bright A_Chase(Null, Null, CHF_FASTCHASE);
 		TNT1 A 0 A_StartSound ("weapons/sshotc", CHAN_WEAPON);
-		RALS CCCCDDDD 1 Bright A_Chase(Null, Null, CHF_FASTCHASE);
+		RALW CCCCDDDD 1 Bright A_Chase(Null, Null, CHF_FASTCHASE);
 		Goto See;
 	Chaingun:
 
-		RALS E 2 Bright A_FaceTarget;
-		RALS F 2 Bright 
+		RALW E 2 Bright A_FaceTarget;
+		RALW F 2 Bright 
 		{	
 			IdleTic = 0;
 			A_StartSound("weapons/chngun", CHAN_WEAPON);
@@ -452,14 +452,14 @@ class RalseiGun_Ralsei : Actor
 			A_ChangeVelocity(random(2, 10), random(-10, 10), random(1, 2), CVF_RELATIVE);
 			A_Chase(Null, Null, CHF_FASTCHASE);
 		}
-		RALS E 2 Bright A_FaceTarget;
-		RALS F 2 Bright 
+		RALW E 2 Bright A_FaceTarget;
+		RALW F 2 Bright 
 		{	
 			A_StartSound("weapons/chngun", CHAN_WEAPON);
 			A_CustomBulletAttack(5.6, 0, 1, 5, "RalseiGun_Puff");
 		}
-		RALS E 2 Bright A_FaceTarget;
-		RALS F 2 Bright 
+		RALW E 2 Bright A_FaceTarget;
+		RALW F 2 Bright 
 		{	
 			A_StartSound("weapons/chngun", CHAN_WEAPON);
 			A_CustomBulletAttack(5.6, 0, 1, 5, "RalseiGun_Puff");
@@ -467,8 +467,8 @@ class RalseiGun_Ralsei : Actor
 			A_ChangeVelocity(random(2, 10), random(-10, 10), random(1, 2), CVF_RELATIVE);
 			A_Chase(Null, Null, CHF_FASTCHASE);
 		}
-		RALS E 2 Bright A_FaceTarget;
-		RALS F 2 Bright 
+		RALW E 2 Bright A_FaceTarget;
+		RALW F 2 Bright 
 		{	
 			A_StartSound("weapons/chngun", CHAN_WEAPON);
 			A_CustomBulletAttack(5.6, 0, 1, 5, "RalseiGun_Puff");
@@ -480,20 +480,20 @@ class RalseiGun_Ralsei : Actor
 	Rocket:
 
 		TNT1 A 0 A_ChangeVelocity(random(2, 10), random(-10, 10), random(1, 2), CVF_RELATIVE);
-		RALS E 1 Bright A_FaceTarget;
-		RALS F 8 Bright 
+		RALW E 1 Bright A_FaceTarget;
+		RALW F 8 Bright 
 		{
 			IdleTic = 0;
 			A_SpawnProjectile("RalseiGun_Rocket");
 			A_ChangeVelocity(random(2, 10), random(-10, 10), random(1, 2), CVF_RELATIVE);
 			A_AlertMonsters(0,AMF_TARGETEMITTER);
 		}
-		RALS E 1 Bright;
+		RALW E 1 Bright;
 		Goto See;
 	Plasma:
 
-		RALS E 2 Bright A_FaceTarget;
-		RALS F 1 Bright 
+		RALW E 2 Bright A_FaceTarget;
+		RALW F 1 Bright 
 		{
 			IdleTic = 0;
 			A_SpawnProjectile("RalseiGun_Plasma");
@@ -501,16 +501,16 @@ class RalseiGun_Ralsei : Actor
 			A_AlertMonsters(0,AMF_TARGETEMITTER);
 		}
 
-		RALS E 2 Bright A_Chase(Null, Null, CHF_FASTCHASE);
-		RALS F 1 Bright 
+		RALW E 2 Bright A_Chase(Null, Null, CHF_FASTCHASE);
+		RALW F 1 Bright 
 		{
 			A_FaceTarget();
 			A_SpawnProjectile("RalseiGun_Plasma");
 			A_AlertMonsters(0,AMF_TARGETEMITTER);
 		}
 
-		RALS E 2 Bright A_Chase(Null, Null, CHF_FASTCHASE);
-		RALS F 1 Bright 
+		RALW E 2 Bright A_Chase(Null, Null, CHF_FASTCHASE);
+		RALW F 1 Bright 
 		{
 			A_FaceTarget();
 			A_SpawnProjectile("RalseiGun_Plasma");
@@ -518,21 +518,21 @@ class RalseiGun_Ralsei : Actor
 			A_AlertMonsters(0,AMF_TARGETEMITTER);
 		}
 
-		RALS E 2 Bright A_Chase(Null, Null, CHF_FASTCHASE);
-		RALS F 1 Bright 
+		RALW E 2 Bright A_Chase(Null, Null, CHF_FASTCHASE);
+		RALW F 1 Bright 
 		{
 			A_FaceTarget();
 			A_SpawnProjectile("RalseiGun_Plasma");
 			A_AlertMonsters(0,AMF_TARGETEMITTER);
 		}
 
-		RALS E 1 Bright;
+		RALW E 1 Bright;
 		TNT1 A 0 A_Jump(166,"See");
 		TNT1 A 0 A_MonsterRefire(0,"See");
 		Goto Plasma;
 	Pain:
-		RALS G 2 Bright A_ChangeVelocity(random(2, 10), random(-10, 10), random(1, 2), CVF_RELATIVE);
-		RALS G 2 Bright Fast
+		RALW G 2 Bright A_ChangeVelocity(random(2, 10), random(-10, 10), random(1, 2), CVF_RELATIVE);
+		RALW G 2 Bright Fast
 		{
 			A_Pain();
 			A_ChangeVelocity(random(2, 10), random(-10, 10), random(1, 2), CVF_RELATIVE);
@@ -556,7 +556,7 @@ class RalseiGun_Ralsei : Actor
 			bSHOOTABLE = true;
 		}
 		TNT1 A 0 A_StartSound("Ralsei/Death", CHAN_BODY, CHANF_DEFAULT, 1.5, ATTN_NONE);
-		RALS A 50 Bright;
+		RALW A 50 Bright;
 		TNT1 A 0
 		{
 			bNEVERTARGET = true;
