@@ -9,7 +9,7 @@ Features:
 * fluffiness
 
 # Credits:
-NeenerWiener - The blank Doomguy companion template
-Ralsei's got a gun! by Agentalex9 - The idle, walk, fire, and explode sprites
-Ralsei 1.2 by itsmeveronica - The teleport / recovery sprites
-DELTARUNE - For the heal, melee, intro, victory, defend, and sit sprites
+* NeenerWiener - The blank Doomguy companion template
+* Ralsei's got a gun! by Agentalex9 - The idle, walk, fire, and explode sprites
+* Ralsei 1.2 by itsmeveronica - The teleport / recovery sprites
+* DELTARUNE - For the heal, melee, intro, victory, defend, and sit sprites
