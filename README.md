@@ -1,4 +1,5 @@
 # Oh my God, Ralsei's got a gun!
+<<<<<<< HEAD
 This companion mod adds Ralsei from Deltarune, but with a gun!
 
 Features:
