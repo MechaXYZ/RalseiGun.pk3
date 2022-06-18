@@ -1,4 +1,4 @@
 Version "4.7.1"
 #include "RalseiGun_ZScript/RalseiGun_Ralsei.zsc"
 #Include "RalseiGun_ZScript/RalseiGun_Spawner.zsc"
-#include "RalseiGun_ZScript/RalseiGun_Taunt.zsc"
+#Include "RalseiGun_ZScript/RalseiGun_Taunt.zsc"

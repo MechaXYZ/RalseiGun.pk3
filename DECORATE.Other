@@ -1,18 +1,18 @@
-ACTOR FriendMarinePuff : BulletPuff
+ACTOR RalseiGun_Puff : BulletPuff
 {
-	DamageType "FRD"
+	DamageType "RalseiGun_Damage"
 }
 
-ACTOR FriendMarineProtection : PowerProtection
+ACTOR RalseiGun_Protection : PowerProtection
 {
 	+INVENTORY.HUBPOWER
 	+INVENTORY.PERSISTENTPOWER
-	DamageFactor "FriendMarineDamage", 0
+	DamageFactor "RalseiGun_Damage", 0
 	Powerup.Duration -0xFFFFFF
 }
 
 
-ACTOR FriendRocketProjectile
+ACTOR RalseiGun_Rocket
 {
 	Radius 11
 	Height 8
@@ -24,7 +24,7 @@ ACTOR FriendRocketProjectile
 	+ROCKETTRAIL
 	SeeSound "weapons/rocklf"
 	DeathSound "weapons/rocklx"
-	DamageType "FRD"
+	DamageType "RalseiGun_Damage"
 	States
 	{
 	Spawn:
@@ -38,7 +38,7 @@ ACTOR FriendRocketProjectile
 	}
 }
 
-ACTOR FriendPlasmaBall
+ACTOR RalseiGun_Plasma
 {
 	Radius 13
 	Height 8
@@ -51,7 +51,7 @@ ACTOR FriendPlasmaBall
 	Alpha 0.75
 	SeeSound "weapons/plasmaf"
 	DeathSound "weapons/plasmax"
-	DamageType "FRD"
+	DamageType "RalseiGun_Damage"
 	States
 	{
 	Spawn:
@@ -63,7 +63,7 @@ ACTOR FriendPlasmaBall
 	}
 }
 
-ACTOR FriendBFGBall
+ACTOR RalseiGun_BFGPlasma
 {
 	Radius 13
 	Height 8
@@ -74,7 +74,7 @@ ACTOR FriendBFGBall
 	RenderStyle Add
 	Alpha 0.75
 	DeathSound "weapons/bfgx"
-	DamageType "FRD"
+	DamageType "RalseiGun_Damage"
 	States
 	{
 	Spawn:
@@ -82,19 +82,19 @@ ACTOR FriendBFGBall
 		Loop
 	Death:
 		BFE1 AB 8 Bright
-		BFE1 C 8 Bright A_BFGSpray("FriendBFGAttack")
+		BFE1 C 8 Bright A_BFGSpray("RalseiGun_BFGAttack")
 		BFE1 DEF 8 Bright
 		Stop
 	}
 }
 
-ACTOR FriendBFGAttack
+ACTOR RalseiGun_BFGAttack
 {
 	+NOBLOCKMAP
 	+NOGRAVITY
 	RenderStyle Add
 	Alpha 0.75
-	DamageType "FRD"
+	DamageType "RalseiGun_Damage"
 	States
 	{
 	Spawn:

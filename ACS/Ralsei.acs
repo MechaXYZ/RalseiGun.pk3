@@ -1,0 +1,16 @@
+#include "zcommon.acs"
+
+SCRIPT "Ralsei_Enter" ENTER
+{
+	GiveInventory("RalseiGun_Protection", 0x7FFFFFFD);
+}
+
+SCRIPT "Ralsei_Respawn" RESPAWN
+{
+	GiveInventory("RalseiGun_Protection", 0x7FFFFFFD);
+}
+
+SCRIPT "Ralsei_Return" RETURN
+{
+	GiveInventory("RalseiGun_Protection", 0x7FFFFFFD);
+}
