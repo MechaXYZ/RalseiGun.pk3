@@ -14,7 +14,7 @@ How to download:
 * Wait for it to finish
 * Rename it whatever you like
 * Change extension to .pk3 if you like
-* Drag and drop it into gzdoom.exe
+* Drag and drop it into gzdoom.exe or type "gzdoom (the name of the file)" if you're on Linux
 * Get FIGHTing!
 
 # Credits:
